@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import { Card } from "react-bootstrap";
 import {Col, Row} from "react-bootstrap";
+import "@/app/css/cards.css";
 
 
 export default function HomeCards(){
@@ -13,7 +14,7 @@ export default function HomeCards(){
       <section className="py-3 mb-5">
         <Row className="d-flex justify-content-evenly ">
           <Card
-            className="mb-3"
+            className="service-card mb-3"
             style={{
               width: "100%",
               maxWidth: "300px",
@@ -49,7 +50,7 @@ export default function HomeCards(){
           </Card>
 
           <Card
-            className="mb-3"
+            className="service-card mb-3"
             style={{
               width: "100%",
               maxWidth: "300px",
@@ -85,7 +86,7 @@ export default function HomeCards(){
           </Card>
 
           <Card
-            className="mb-3"
+            className="service-card mb-3"
             style={{
               width: "100%",
               maxWidth: "300px",
