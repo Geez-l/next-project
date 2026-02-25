@@ -1,11 +1,8 @@
 "use client";
 import Image from "next/image";
 import "@/app/css/sidebar.css";
-import { useState } from "react";
-import Link from "next/link";
-import React from "react";
 import { Card } from "react-bootstrap";
-import {Col, Row} from "react-bootstrap";
+import {Row} from "react-bootstrap";
 import "@/app/css/cards.css";
 
 

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // layout.tsx
 import "bootstrap/dist/css/bootstrap.min.css";
+import Sidebar from "@/app/components/sidebar";
+import "@/app/css/sidebar.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +35,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <div className="layout-wrapper d-flex vh-100">
+          <Sidebar />
+          <main className="main-content flex-fill overflow-auto p-4">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

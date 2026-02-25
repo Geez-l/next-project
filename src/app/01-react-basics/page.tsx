@@ -1,10 +1,13 @@
-import Sidebar from "@/app/components/sidebar.jsx";
+
 
 export default function ReactBasics() {
   return (
     <main>
-        <Sidebar />
-      <h1 className="text-center">Hello</h1>
+      <h1 className="text-title text-center py-xl-4 text-muted">This section introduces the basics of React. </h1>
+
+      <section className="materials-section">
+        
+      </section>
     </main>
   );
 }

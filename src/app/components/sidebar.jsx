@@ -3,7 +3,6 @@ import Image from "next/image";
 import "@/app/css/sidebar.css";
 import { useState } from "react";
 import Link from "next/link";
-import HomeCards from "./cards";
 
 export default function Sidebar(){
     const [collapsed, setCollapsed] = useState(false);
@@ -163,19 +162,6 @@ export default function Sidebar(){
             </div>
           </div>
         </nav>
-
-        <section className="main-content">
-          <div className="container-fluid align-content-center">
-            <h2 className="text-center fs-1" style={{fontSize:"2.5rem"}}>Welcome</h2>
-            <p className="text-muted text-center" style={{fontSize:"1.2rem"}}>
-                This is a compilation of things to learn and explore in the world of web development,
-                covering a wide range of topics from React basics to advanced concepts.  
-            </p>
-            <div>
-                < HomeCards />
-            </div>
-          </div>
-        </section>
       </div>
     );
 }
