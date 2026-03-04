@@ -1,0 +1,24 @@
+.tz-gallery {
+    padding: 40px;
+}
+
+.tz-gallery .row>div {
+    padding: 2px;
+}
+
+.tz-gallery .lightbox img {
+    width: 100%;
+    border-radius: 0;
+    position: relative;
+}
+
+.tz-gallery .lightbox::before {
+    position: absolute;
+    top:50%;
+    left:50%;
+    /* margin-top:-13px; */
+    margin
+
+
+}
+

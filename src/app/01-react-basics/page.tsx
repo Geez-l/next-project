@@ -1,5 +1,6 @@
 import "@/app/css/01-react-basics-css/01.css";
-
+import { Row } from "react-bootstrap";
+import Image from "next/image";
 export default function ReactBasics() {
   return (
     <main className="container">
@@ -14,6 +15,59 @@ export default function ReactBasics() {
           <div className="highlight py-md-4">
             <strong>Definition:</strong> a common UI component used to group
             related information into a single, visually distinct container.{" "}
+          </div>
+          <div className="container gallery-container">
+            <div className="tz-gallery">
+              <Row className="col-sm-12 col-md-4">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                  className="{lightbox}"
+                />
+              </Row>
+              <Row className="col-sm-6 col-md-4">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                />
+              </Row>
+              <Row className="col-sm-6 col-md-4">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                />
+              </Row>
+              <Row className="col-sm-6 col-md-8">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                />
+              </Row>
+              <Row className="col-sm-6 col-md-4">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                />
+              </Row>
+              <Row className="col-sm-6 col-md-4">
+                <Image
+                  src="/assets/gallery/gallery1.jpg"
+                  alt="Image 1"
+                  width={200}
+                  height={200}
+                />
+              </Row>
+            </div>
           </div>
         </section>
       </div>

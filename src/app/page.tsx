@@ -17,14 +17,12 @@ export default function Home() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    let timeout;
-
-    if (!isDeleting && index < text.length) {
-      timeout = setTimeout()
+    // let timeout;
+    if (!isDeleting && index < fullText.length) {
     }
     if (index < fullText.length){
       const timeout = setTimeout(() =>{
-        // setDisplayedText((prev) => prev + fullText[index]);
+        setDisplayedText((prev) => prev + fullText[index]);
         setIndex((prev) => prev + 1);
       }, 30);
 
