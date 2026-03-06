@@ -4,7 +4,10 @@ import { Row, Col } from "react-bootstrap";
 import Image from "next/image";
 import baguetteBox from "baguettebox.js";
 import "baguettebox.js/dist/baguetteBox.min.css";
+// import "bootstrap/dist/js/bootstrap.bundle.min.js";
+// import * as bootstrap from 'bootstrap';
 import { useEffect } from "react";
+import { title } from "process";
 
 export default function ReactBasics() {
 
@@ -22,6 +25,31 @@ export default function ReactBasics() {
   });
 }, []);
 
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
+  const slides = [
+    {
+      src: "/assets/gallery/gallery4.jpg",
+      alt: "Image 1",
+      title: "Computer Science image",
+      description: "Lorem ipsum",
+    },
+    {
+      src: "/assets/gallery/gallery4.jpg",
+      alt: "Image 1",
+      title: "Computer Science image",
+      description: "Lorem ipsum",
+    },
+    {
+      src: "/assets/gallery/gallery4.jpg",
+      alt: "Image 1",
+      title: "Computer Science image",
+      description: "Lorem ipsum",
+    },
+    
+  ];
   return (
     <main className="container">
       <div className="header-title text-center py-xl-4 text-muted">
@@ -195,14 +223,174 @@ export default function ReactBasics() {
       </div>
       <section className="py-5">
         <div className="material-section">
-          <h2 className="py-1 align-content-start">1. Carousel</h2>
+          <h2 className="py-1 align-content-start">2. Carousel</h2>
 
           <div className="highlight py-md-4">
             <strong>Definition:</strong> a UI component used to display multiple
             pieces of content (images, text, etc.) within a single, space-saving
             section, allowing users to navigate through them sequentially.
           </div>
+          <div
+            id="imageCarousel1"
+            className="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div className="carousel-indicators">
+              <button
+                type="button"
+                data-bs-target="#imageCarousel"
+                data-bs-slide-to="0"
+                className="active"
+                aria-current="true"
+                aria-label="Slide1"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#imageCarousel"
+                data-bs-slide-to="1"
+                aria-label="Slide2"
+              ></button>
+              <button
+                type="button"
+                data-bs-target="#imageCarousel"
+                data-bs-slide-to="2"
+                aria-label="Slide3"
+              ></button>
+            </div>
+            <div className="carousel-inner">
+              <div className="carousel-item active">
+                <Image
+                  src="/assets/gallery/gallery4.jpg"
+                  alt="Image 1"
+                  width={400}
+                  height={300}
+                  className="d-block w-100"
+                />
+                <div className="carousel-caption d-none d-md-block">
+                  <h5>Description of the image</h5>
+                  <p>This image reflects mood in computer science</p>
+                </div>
+              </div>
+              <div className="carousel-item">
+                <Image
+                  src="/assets/gallery/gallery4.jpg"
+                  alt="Image 1"
+                  width={400}
+                  height={300}
+                  className="d-block w-100"
+                />
+              </div>
+              <div className="carousel-item">
+                <Image
+                  src="/assets/gallery/gallery4.jpg"
+                  alt="Image 1"
+                  width={400}
+                  height={300}
+                  className="d-block w-100"
+                />
+              </div>
+            </div>
+            <button
+              className="carousel-control-prev"
+              type="button"
+              data-bs-target="#imageCarousel"
+              data-bs-slide="prev"
+            >
+              <span
+                className="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Previous</span>
+            </button>
+            <button
+              className="carousel-control-next"
+              type="button"
+              data-bs-target="#imageCarousel"
+              data-bs-slide="next"
+            >
+              <span
+                className="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Next</span>
+            </button>
+          </div>
+          <section className="py-5">
+            <h2 className="py-1 align-content-start">2. Carousel optimized </h2>
+            <div className="highlight py-md-4">
+              <strong>Definition:</strong> a UI component used to display
+              multiple pieces of content (images, text, etc.) within a single,
+              space-saving section, allowing users to navigate through them
+              sequentially.
+            </div>
+            <div
+            id="imageCarousel"
+            className="carousel slide"
+            data-bs-ride="carousel"
+            >
+              <div className="carousel-indicators">
+                {slides.map((_, idx) => (
+                  <button
+                  key={idx}
+                  type="button"
+                  data-bs-target="#imageCarousel"
+                  data-bs-slide-to={idx}
+                  className={idx === 0 ? "active" : ""}
+                  aria-current={idx === 0 ? "true" : undefined}
+                  aria-label={`Slide ${idx + 1}`}
+                  ></button>
+                ))}
+              </div>
+                {/* Slides */}
+                <div className="carousel-inner">
+                  {slides.map((slide, idx) => (
+                    <div 
+                    key={idx}
+                    className={`carousel-item ${idx === 0 ? "active" : " "}`}>
+                      <Image
+                      src={slide.src}
+                      alt={slide.alt}
+                      width={800}
+                      height={600}
+                      className="d-block w-100"
+                      style={{objectFit:"cover"}}
+                      />
+                      <div className="carousel-caption d-none d-md-block">
+                        <h5>{slide.title}</h5>
+                        <p>{slide.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              {/* Carousel controls */}
+              <button
+              className="carousel-control-prev"
+              type="button"
+              data-bs-target="#imageCarousel"
+              data-bs-slide="prev"
+              >
+                <span
+                className="carousel-control-prev-icon"
+                aria-hidden="true">
 
+                </span>
+                <span className="visually-hidden">Previous</span>
+              </button>
+              <button
+              className="carousel-control-next"
+              type="button"
+              data-bs-target="#imageCarousel"
+              data-bs-slide="next">
+                <span
+                className="carousel-control-next-icon"
+                aria-hidden="true"></span>
+                <span className="visually-hidden">Next</span>
+              </button>
+            
+
+            </div>
+
+          </section>
         </div>
       </section>
     </main>
