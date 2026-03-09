@@ -8,7 +8,7 @@ import "baguettebox.js/dist/baguetteBox.min.css";
 // import * as bootstrap from 'bootstrap';
 import { useEffect } from "react";
 import { title } from "process";
-
+import ConditionalRendering from "../components/conditional_rendering"
 export default function ReactBasics() {
 
   const images = [
@@ -324,73 +324,90 @@ export default function ReactBasics() {
               sequentially.
             </div>
             <div
-            id="imageCarousel"
-            className="carousel slide"
-            data-bs-ride="carousel"
+              id="imageCarousel"
+              className="carousel slide"
+              data-bs-ride="carousel"
             >
               <div className="carousel-indicators">
                 {slides.map((_, idx) => (
                   <button
-                  key={idx}
-                  type="button"
-                  data-bs-target="#imageCarousel"
-                  data-bs-slide-to={idx}
-                  className={idx === 0 ? "active" : ""}
-                  aria-current={idx === 0 ? "true" : undefined}
-                  aria-label={`Slide ${idx + 1}`}
+                    key={idx}
+                    type="button"
+                    data-bs-target="#imageCarousel"
+                    data-bs-slide-to={idx}
+                    className={idx === 0 ? "active" : ""}
+                    aria-current={idx === 0 ? "true" : undefined}
+                    aria-label={`Slide ${idx + 1}`}
                   ></button>
                 ))}
               </div>
-                {/* Slides */}
-                <div className="carousel-inner">
-                  {slides.map((slide, idx) => (
-                    <div 
+              {/* Slides */}
+              <div className="carousel-inner">
+                {slides.map((slide, idx) => (
+                  <div
                     key={idx}
-                    className={`carousel-item ${idx === 0 ? "active" : " "}`}>
-                      <Image
+                    className={`carousel-item ${idx === 0 ? "active" : " "}`}
+                  >
+                    <Image
                       src={slide.src}
                       alt={slide.alt}
                       width={800}
                       height={600}
                       className="d-block w-100"
-                      style={{objectFit:"cover"}}
-                      />
-                      <div className="carousel-caption d-none d-md-block">
-                        <h5>{slide.title}</h5>
-                        <p>{slide.description}</p>
-                      </div>
+                      style={{ objectFit: "cover" }}
+                    />
+                    <div className="carousel-caption d-none d-md-block">
+                      <h5>{slide.title}</h5>
+                      <p>{slide.description}</p>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
+              </div>
               {/* Carousel controls */}
               <button
-              className="carousel-control-prev"
-              type="button"
-              data-bs-target="#imageCarousel"
-              data-bs-slide="prev"
+                className="carousel-control-prev"
+                type="button"
+                data-bs-target="#imageCarousel"
+                data-bs-slide="prev"
               >
                 <span
-                className="carousel-control-prev-icon"
-                aria-hidden="true">
-
-                </span>
+                  className="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
                 <span className="visually-hidden">Previous</span>
               </button>
               <button
-              className="carousel-control-next"
-              type="button"
-              data-bs-target="#imageCarousel"
-              data-bs-slide="next">
+                className="carousel-control-next"
+                type="button"
+                data-bs-target="#imageCarousel"
+                data-bs-slide="next"
+              >
                 <span
-                className="carousel-control-next-icon"
-                aria-hidden="true"></span>
+                  className="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
                 <span className="visually-hidden">Next</span>
               </button>
-            
-
             </div>
-
           </section>
+        </div>
+      </section>
+      <section className="py-5">
+        <div className="material-section">
+          <h2 className="py-1 align-content-start">
+            3. Conditional Rendering{" "}
+          </h2>
+          <div className="highlight py-md-4">
+            <strong>Definition:</strong> Conditional rendering is a technique in
+            frameworks like React that displays different UI elements or
+            components based on specific conditions, such as user authentication
+            status (if logged in, show profile; else, show login button). It
+            uses standard JavaScript logic—including if statements, ternary
+            operators (? :), and logical && operators—to determine what to
+            render.
+          </div>
+          <ConditionalRendering/>
+
         </div>
       </section>
     </main>
