@@ -37,3 +37,42 @@ Dark mode toggles
 */
 
 // MAPS
+
+/*
+(1) .map() with implicit return using () parenthesis  
+-used when you don't need extra logic inside of them
+
+{content.map((text, idx) => (
+<Accordion.Item
+    eventKey={ix.toString()} key=idx>
+    <Accordion.Header>
+    Accordion {idx + 1}
+    </Accordion.Header>
+    <Accordion.Body>
+    {text}
+    </Accordion.Body>
+</Accordion.Item>
+))}
+
+() - means return JSX automatically 
+ (text,idx) =>{
+    return JSX;
+}
+
+(2) .map() with block body (curly braces)
+{content.map ((text, idx1) => {
+    const key=idx1.toString();
+    const isOpen = activeKey1 === key;
+
+    return (
+    <Accordion.Item 
+    eventKey={key} key={key}>
+    </Accordion.Item>
+    )
+})}
+
+map -> do something -> return JSX
+
+// used the condition
+{!isOpen && <small>Press to see</small>}
+*/

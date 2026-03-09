@@ -8,7 +8,8 @@ import "baguettebox.js/dist/baguetteBox.min.css";
 // import * as bootstrap from 'bootstrap';
 import { useEffect } from "react";
 import { title } from "process";
-import ConditionalRendering from "../components/conditional_rendering"
+import ConditionalRendering from "../components/conditional_rendering";
+import SpinnerUI from "../01-react-basics/spinner";
 export default function ReactBasics() {
 
   const images = [
