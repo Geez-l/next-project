@@ -9,7 +9,7 @@ import "baguettebox.js/dist/baguetteBox.min.css";
 import { useEffect } from "react";
 import { title } from "process";
 import ConditionalRendering from "../components/conditional_rendering";
-import SpinnerUI from "../01-react-basics/spinner";
+import LoadingTypes from "../components/conditional_rendering/list_loading";
 export default function ReactBasics() {
 
   const images = [
@@ -407,8 +407,19 @@ export default function ReactBasics() {
             operators (? :), and logical && operators—to determine what to
             render.
           </div>
-          <ConditionalRendering/>
-
+          <ConditionalRendering />
+        </div>
+      </section>
+      <section className="py-5">
+        <div className="material-section">
+          <h2 className="py-1 align-content-start">3.1. Loading </h2>
+          <div className="highlight py-md-4">
+            <strong>Definition:</strong> Implementing loading states and lazy
+            loading in Next.js offers significant benefits for both user
+            experience (UX) and performance, primarily through the use of
+            streaming with React Suspense and automatic code-splitting.
+          </div>
+          <LoadingTypes />
         </div>
       </section>
     </main>

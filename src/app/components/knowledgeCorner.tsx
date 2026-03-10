@@ -75,4 +75,8 @@ map -> do something -> return JSX
 
 // used the condition
 {!isOpen && <small>Press to see</small>}
+
+
+(3) 
+
 */
