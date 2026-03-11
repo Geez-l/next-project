@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { title } from "process";
 import ConditionalRendering from "../components/conditional_rendering";
 import LoadingTypes from "../components/conditional_rendering/list_loading";
+import BreadCrumbsUI from "../components/another_breadcrumb";
 export default function ReactBasics() {
 
   const images = [
@@ -57,6 +58,7 @@ export default function ReactBasics() {
         <h1>React Basics</h1>
         <p>This section introduces the basics of React.</p>
       </div>
+      <BreadCrumbsUI/>
 
       <div className="material-section">
         <section className="section">

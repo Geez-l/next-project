@@ -1,5 +1,6 @@
 import "../css/01-react-basics-css/01.css";
 import "../css/dot.css";
+import BreadCrumbsUI from "../components/conditional_rendering/breadcrumb";
 import { Spinner } from "react-bootstrap";
 
 export default function ReactIntermediate() {
@@ -35,6 +36,7 @@ export default function ReactIntermediate() {
             dynamically render a list of images based on an array of data (e.g.,
             an array of image source paths).
           </div>
+          <BreadCrumbsUI/>
         </div>
       </section>
     </main>
