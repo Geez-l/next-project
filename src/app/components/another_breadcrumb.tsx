@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navigation } from "@/data/navigation";
+import "../css/02-react-intermediate/breadcrumb.css";
 
 export default function BreadCrumbsUI() {
 
@@ -9,22 +10,20 @@ export default function BreadCrumbsUI() {
 
     const currentPage = navigation.find((item) => item.href === pathname);
     return (
-        <nav aria-label="breadcrumb" className="mb-3">
-            <ol className="breadcrumb">
-                {/* Home */}
-                <li className="breadcrumb-item">
-                    <Link href="/">Home</Link>
-                </li>
+      <nav aria-label="breadcrumb" className="mb-3">
+        <div className="breadcrumb-box">
+          <ol className="breadcrumb">
+            {/* Home */}
+            <li className="breadcrumb-item">
+              <Link href="/">Home</Link>
+            </li>
 
-                {/* Current Page */}
-                {pathname !== "/" && currentPage && (
-                    <li className="breadcrumb-item active">
-                        {currentPage.label}
-                    </li>
-                )}
-            </ol>
-        </nav>
-
-
+            {/* Current Page */}
+            {pathname !== "/" && currentPage && (
+              <li className="breadcrumb-item active">{currentPage.label}</li>
+            )}
+          </ol>
+        </div>
+      </nav>
     );
 }

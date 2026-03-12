@@ -1,7 +1,10 @@
+"use client";
 import "../css/01-react-basics-css/01.css";
 import "../css/dot.css";
 import BreadCrumbsUI from "../components/conditional_rendering/breadcrumb";
 import { Spinner } from "react-bootstrap";
+import CheckBoxUI from "../components/conditional_rendering/02-react-intermediate/checkbox";
+import PaginationUI from "../components/conditional_rendering/02-react-intermediate/pagination";
 
 export default function ReactIntermediate() {
   return (
@@ -36,7 +39,32 @@ export default function ReactIntermediate() {
             dynamically render a list of images based on an array of data (e.g.,
             an array of image source paths).
           </div>
-          <BreadCrumbsUI/>
+          <BreadCrumbsUI />
+        </div>
+      </section>
+      <section className="py-5">
+        <div className="material-section">
+          <h2 className="py-1 align-content-start">2. Checkbox</h2>
+          <div className="highlight py-md-4">
+            <strong>Definition:</strong> A checkbox in Next.js is a standard
+            HTML form control, typically implemented as a React component that
+            leverages React's state management for interactivity. It allows
+            users to select one or more options from a list or toggle a binary
+            (yes/no, on/off) setting.
+          </div>
+          <CheckBoxUI />
+        </div>
+      </section>
+      <section className="py-5">
+        <div className="material-section">
+          <h2 className="py-1 align-content-start">3. Pagination</h2>
+          <div className="highlight py-md-4">
+            <strong>Definition:</strong> Implementing pagination in Next.js
+            typically involves using URL query parameters to manage the current
+            page and fetching data on the server side for better performance and
+            SEO. This approach allows users to share and bookmark specific pages
+          </div>
+          <PaginationUI />
         </div>
       </section>
     </main>
