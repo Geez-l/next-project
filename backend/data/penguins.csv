@@ -1,4 +1,4 @@
-species,island,bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,sex,diet,life_stage,health_metrics,year,image_url
+species,island,bill_length_mm,bill_depth_mm,flipper_length_mm,body_mass_g,sex,diet,life_stage,health_metrics,year_taken,image_url
 Adelie,Biscoe,53.4,17.8,219,5687,female,fish,adult,overweight,2021,/penguins1.jpg
 Adelie,Biscoe,49.3,18.1,245,6811,female,fish,adult,overweight,2021,/penguins2.jpg
 Adelie,Biscoe,55.7,16.6,226,5388,female,fish,adult,overweight,2021,/penguins3.jpg
