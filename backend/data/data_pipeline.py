@@ -74,6 +74,42 @@ def clean_data():
     conn.close()
     print("Data cleaned")
 
+def upsert():
+    conn = connect()
+    curr =conn.cursor()
+    print("Updating tables")
+
+    # update species
+    curr.execute("""
+    INSERT INTO species_pen(species)
+    SELECT species_id, species
+    FROM penguins_staging
+    ON CONFLICT (species)
+    DO NOTHING
+    """)
+
+    # update penguins 
+    curr.execute("""
+    INSERT INTO penguins(
+    species_id,
+    island,
+    sex,
+    diet,
+    life_stage,
+    health_metrics,
+    year_penguin
+    )
+    SELECT
+    s.species_id,
+    ps.island,
+    ps.sex,
+    ps.diet,
+    ps.life_stage,
+    ps.health_metrics,
+    ps.year_penguin
+    
+    """)
+
 if __name__ == "__main__":
     connect()
 
