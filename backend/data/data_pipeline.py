@@ -1,238 +1,282 @@
-# cd /home/philomics-glee/Desktop/glee-philomics/next-project/backend/data and cat > data_pipeline.py <<'PY'
-# Connect postgres to python
-
 import psycopg2
 from config import config
-import csv
-
 import os
-import sys
 import time
-import logging
 from watchdog.observers import Observer
-from watchdog.events import LoggingEventHandler
 from watchdog.events import FileSystemEventHandler
 
-# csv_file = "/backend/data/penguins.csv"
-csv_file = os.path.join(os.path.dirname(__file__), 'penguins.csv')
+csv_file = os.path.join(os.path.dirname(__file__), "penguins.csv")
 
-# create connection
+
 def connect():
-    conn = None
-    try: 
+    try:
         params = config()
-        print("Connecting to the database ...")
-        conn = psycopg2.connect(**params)
+        return psycopg2.connect(**params)
+    except Exception as e:
+        print("Database connection error:", e)
+        return None
 
-        # create a cursor
-        # curs = conn.cursor()
-        # print("Postgresql database version")
-        # curs.execute("SELECT version()")
-        # db_version = curs.fetchone()
-        # print(db_version)
-        # curs.close()
-        return conn
-         
-    # except Exception as e :
-    #     print("Error occurred: {e}")
-    except(Exception, psycopg2.DatabaseError) as error:
-        print("Error occurred:", error)  
-    # finally:
-    #     if conn is not None:
-    #         conn.close()
-    #         print("Database connection terminated.")
 
 def ingest_data():
-    # connect to postgresql
     conn = connect()
-    curr = conn.cursor()
-    print("Loading csv to the staging table")
+    if not conn:
+        return
 
-    # open the csv file
-    with open(csv_file, 'r', encoding="utf-8") as file:
-        curr.copy_expert(
-            """
-        COPY penguins_staging
-        (
-        species,
-        island,
-        bill_length_mm,
-        flipper_length_mm,
-        body_mass_g,
-        sex, 
-        diet,
-        life_stage,
-        health_metrics,
-        year_taken,
-        image_url
-        )
-        FROM STDIN
-        WITH (FORMAT csv, 
-        HEADER true
-        DELIMITER ','
-            """,
-            file
-        )
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT current_database(), current_user;")
+            db_name, db_user = cur.fetchone()
+            print("Connected to database:", db_name)
+            print("Connected as user:", db_user)
 
-        conn.commit()
-        curr.close()
+            print("Truncating staging table...")
+            cur.execute("TRUNCATE TABLE penguins_staging RESTART IDENTITY;")
+
+            print("Loading CSV into staging...")
+            with open(csv_file, "r", encoding="utf-8") as file:
+                cur.copy_expert(
+                    """
+                    COPY penguins_staging (
+                        species,
+                        island,
+                        bill_length_mm,
+                        bill_depth_mm,
+                        flipper_length_mm,
+                        body_mass_g,
+                        sex,
+                        diet,
+                        life_stage,
+                        health_metrics,
+                        year_taken,
+                        image_url
+                    )
+                    FROM STDIN
+                    WITH (FORMAT CSV, HEADER TRUE)
+                    """,
+                    file
+                )
+
+            cur.execute("SELECT COUNT(*) FROM penguins_staging;")
+            count = cur.fetchone()[0]
+            conn.commit()
+            print(f"Data ingested successfully: {count} rows loaded into staging.")
+
+    except Exception as e:
+        conn.rollback()
+        print("Ingest error:", e)
+    finally:
         conn.close()
-        print("Data ingested successfully")
 
-# clean the data
+
 def clean_data():
     conn = connect()
-    curr = conn.cursor()
-    print("Cleaning data")
+    if not conn:
+        return
 
-    # remove rows without species
-    curr.execute("""
-    DELETE FROM penguins_staging 
-    WHERE species is NULL
-    """)
+    try:
+        with conn.cursor() as cur:
+            print("Cleaning staging data...")
 
-    # standardize species name
-    curr.execute("""
-    UPDATE penguins_staging 
-    SET species = INITCAP(species)
-    """)
+            cur.execute("""
+                DELETE FROM penguins_staging
+                WHERE species IS NULL
+                   OR TRIM(species) = '';
+            """)
 
-    conn.commit()
-    curr.close()
-    conn.close()
-    print("Data cleaned")
+            cur.execute("""
+                UPDATE penguins_staging
+                SET
+                    species = INITCAP(TRIM(species)),
+                    island = NULLIF(TRIM(island), ''),
+                    sex = LOWER(TRIM(sex)),
+                    diet = NULLIF(TRIM(diet), ''),
+                    life_stage = NULLIF(TRIM(life_stage), ''),
+                    health_metrics = NULLIF(TRIM(health_metrics), ''),
+                    image_url = NULLIF(TRIM(image_url), '');
+            """)
+            cur.execute("""
+                UPDATE penguins_staging
+                SET sex = NULL
+                WHERE sex NOT IN ('male', 'female');
+            """)
+
+            cur.execute("SELECT COUNT(*) FROM penguins_staging;")
+            count = cur.fetchone()[0]
+            conn.commit()
+            print(f"Data cleaned. Remaining rows in staging: {count}")
+
+    except Exception as e:
+        conn.rollback()
+        print("Clean error:", e)
+    finally:
+        conn.close()
+
 
 def upsert():
     conn = connect()
-    curr =conn.cursor()
-    print("Updating tables")
+    if not conn:
+        return
 
-    # update species
-    curr.execute("""
-    INSERT INTO species
-    (species)
-    SELECT DISTINCT species
-    FROM penguins_staging
-    WHERE species is NOT NULL
-    ON CONFLICT (species)
-    DO NOTHING
-    """)
+    try:
+        with conn.cursor() as cur:
+            print("Upserting data...")
 
-    # update penguins 
-    curr.execute("""
-    INSERT INTO penguins(
-    species_id,
-    island,
-    sex,
-    diet,
-    life_stage,
-    health_metrics,
-    year_penguin
-    )
-    SELECT
-    s.species_id,
-    ps.island,
-    ps.sex,
-    ps.diet,
-    ps.life_stage,
-    ps.health_metrics,
-    ps.year_penguin
-    FROM penguins_staging ps
-    JOIN species s
-    ON ps.species = s.species
-    ON CONFLICT (species_id, island, year_penguin)
-    DO UPDATE 
+            # 1) SPECIES
+            cur.execute("""
+                INSERT INTO species (species)
+                SELECT DISTINCT species
+                FROM penguins_staging
+                WHERE species IS NOT NULL
+                ON CONFLICT (species) DO NOTHING;
+            """)
 
-    SET
-        sex = EXCLUDED.sex,
-        diet = EXCLUDED.diet,
-        life_stage = EXCLUDED.diet,
-        health_metrics = EXCLUDED.health_metrics
-        
-    """)
+            # 2) PENGUINS
+            cur.execute("""
+                INSERT INTO penguins (
+                    species_id,
+                    island,
+                    sex,
+                    diet,
+                    life_stage,
+                    health_metrics,
+                    year_taken
+                )
+                SELECT
+                    s.species_id,
+                    ps.island,
+                    CASE
+                        WHEN ps.sex IN ('male', 'female')
+                        THEN ps.sex::sex_type
+                        ELSE NULL
+                    END,
+                    ps.diet,
+                    ps.life_stage,
+                    ps.health_metrics,
+                    ps.year_taken
+                FROM (
+                    SELECT
+                        species,
+                        island,
+                        year_taken,
+                        MAX(sex) AS sex,
+                        MAX(diet) AS diet,
+                        MAX(life_stage) AS life_stage,
+                        MAX(health_metrics) AS health_metrics
+                    FROM penguins_staging
+                    GROUP BY species, island, year_taken
+                ) ps
+                JOIN species s
+                  ON s.species = ps.species
+                ON CONFLICT (species_id, island, year_taken)
+                DO UPDATE SET
+                    sex = EXCLUDED.sex,
+                    diet = EXCLUDED.diet,
+                    life_stage = EXCLUDED.life_stage,
+                    health_metrics = EXCLUDED.health_metrics;
+            """)
 
-    # update measurements
-    curr.execute("""
-    INSERT INTO measurement(
-    penguins_id,
-    bill_length_mm,
-    flipper_length_mm,
-    body_mass_g
-    )
-    SELECT 
-    p.penguins_id
-    ps.bill_length_mm,
-    ps.bill_depth_mm,
-    ps.flipper_length_mm,
-    ps.body_mass_g
-    FROM penguins_staging ps
-    JOIN psecies s
-    ON ps.psecies = s.species
-    JOIN penguins p 
-    ON p.species_id = s.species_id
-    """)
+            # 3) CLEAR CHILD TABLES BEFORE RELOADING
+            # This is the easiest way when rerunning whole pipeline from scratch
+            cur.execute("TRUNCATE TABLE measurement RESTART IDENTITY CASCADE;")
+            cur.execute("TRUNCATE TABLE images RESTART IDENTITY CASCADE;")
 
-    # update images
-    curr.execute("""
-    INSERT INTO images (
-    penguin_id,
-    image_url
-    )
-    SELECT 
-    p.penguin_id,
-    ps.image_url
-    FROM penguins_staging ps
-    JOIN species s
-    ON ps.species = s.species
-    JOIN penguins p
-    ON p.species_id = s.species_id
-    WHERE ps.image is NOT NULL
-    """)
+            # 4) MEASUREMENT
+            cur.execute("""
+                INSERT INTO measurement (
+                    penguins_id,
+                    bill_length_mm,
+                    bill_depth_mm,
+                    flipper_length_mm,
+                    body_mass_g
+                )
+                SELECT
+                    p.penguins_id,
+                    ps.bill_length_mm,
+                    ps.bill_depth_mm,
+                    ps.flipper_length_mm,
+                    ps.body_mass_g
+                FROM penguins_staging ps
+                JOIN species s
+                  ON s.species = ps.species
+                JOIN penguins p
+                  ON p.species_id = s.species_id
+                 AND p.island = ps.island
+                 AND p.year_taken = ps.year_taken;
+            """)
 
-    conn.commit()
-    curr.close()
-    print("Tables updated")
+            # 5) IMAGES
+            cur.execute("""
+                INSERT INTO images (
+                    penguins_id,
+                    image_url
+                )
+                SELECT
+                    p.penguins_id,
+                    ps.image_url
+                FROM penguins_staging ps
+                JOIN species s
+                  ON s.species = ps.species
+                JOIN penguins p
+                  ON p.species_id = s.species_id
+                 AND p.island = ps.island
+                 AND p.year_taken = ps.year_taken
+                WHERE ps.image_url IS NOT NULL;
+            """)
+
+            conn.commit()
+            print("Upsert complete.")
+
+            # show row counts
+            cur.execute("SELECT COUNT(*) FROM species;")
+            print("species rows:", cur.fetchone()[0])
+
+            cur.execute("SELECT COUNT(*) FROM penguins;")
+            print("penguins rows:", cur.fetchone()[0])
+
+            cur.execute("SELECT COUNT(*) FROM measurement;")
+            print("measurement rows:", cur.fetchone()[0])
+
+            cur.execute("SELECT COUNT(*) FROM images;")
+            print("images rows:", cur.fetchone()[0])
+
+    except Exception as e:
+        conn.rollback()
+        print("Upsert error:", e)
+    finally:
+        conn.close()
+
 
 def run_pipeline():
-    connect()
+    print("\n--- Running pipeline ---")
     ingest_data()
     clean_data()
     upsert()
+    print("--- Pipeline complete ---\n")
 
-    print("Pipeline executed")
 
-
-# CSV Watcher for changes 
 class CSVWatcher(FileSystemEventHandler):
-    def on_modify(self, event):
-        if event.src_path.endswith(csv_file):
-            print("CSV updated")
+    def on_modified(self, event):
+        if event.src_path.endswith("penguins.csv"):
+            print("CSV updated!")
             run_pipeline()
+
 
 def watch_csv():
     observer = Observer()
-    observer.schedule(
-        CSVWatcher(),
-        path = os.getcwd(),
-        recursive = False
-    )
-
+    observer.schedule(CSVWatcher(), path=os.path.dirname(csv_file), recursive=False)
     observer.start()
-    print("Watching csv updates")
-
+    print("Watching CSV for changes...")
     try:
-        while True: 
+        while True:
             time.sleep(2)
-    # finally: 
-    #     observer.stop()
-    #     observer.join()      
     except KeyboardInterrupt:
         observer.stop()
+    observer.join()
 
-    observer.join()  
 
 if __name__ == "__main__":
-    # connect()
-    watch_csv()
-
-
+    run_pipeline()
+    # watch_csv()
+    # ingest_data()
+    # clean_data()
+    # upsert()
