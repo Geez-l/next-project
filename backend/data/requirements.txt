@@ -1,0 +1,5 @@
+# cmd for requirements 
+
+import psycopg2
+from config import config
+import csv

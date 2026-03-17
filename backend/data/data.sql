@@ -1,7 +1,7 @@
 -- create staging
 
 DROP TABLE IF EXISTS penguins_staging CASCADE;
-DROP TABLE IF EXISTS species_pen CASCADE;
+DROP TABLE IF EXISTS species CASCADE;
 DROP TABLE IF EXISTS penguins CASCADE;
 DROP TABLE IF EXISTS measurements CASCADE;
 DROP TABLE IF EXISTS images CASCADE;
@@ -28,7 +28,7 @@ CREATE TABLE penguins_staging (
 -- create the tables for each
 
 -- species
-CREATE TABLE species_pen (
+CREATE TABLE species (
 species_id SERIAL PRIMARY KEY,
 species VARCHAR(100) NOT NULL
 );
@@ -46,7 +46,7 @@ CREATE TABLE penguins (
 );
 
 CREATE TABLE measurement (
-    measurement_id PRIMARY KEY,
+    measurement_id SERIAL PRIMARY KEY,
     bill_length_mm FLOAT,
     bill_depth_mm FLOAT,
     flipper_length_mm FLOAT, 
@@ -55,8 +55,8 @@ CREATE TABLE measurement (
 );
 
 CREATE TABLE images (
-    images_id PRIMARY KEY,
-    image_url TEXT
+    images_id SERIAL PRIMARY KEY,
+    image_url TEXT,
     penguin_id INT REFERENCES penguins(penguin_id) ON DELETE CASCADE
 );
 
